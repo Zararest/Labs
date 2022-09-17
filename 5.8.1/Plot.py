@@ -2,9 +2,15 @@
 
 import numpy as np             
 import matplotlib.pyplot as plt
-
+from scipy.optimize import curve_fit
+from sklearn.metrics import r2_score
 
 class PlotFunction:
+
+    def __get_nearest_val(self, X):
+        absolute_val_array = np.abs(self.arrayX - X)
+        smallest_difference_index = absolute_val_array.argmin()
+        return self.__arrayY[smallest_difference_index]
 
     #dpi - dots per interval
     def __init__(self):
@@ -12,9 +18,18 @@ class PlotFunction:
         self.__arrayY = np.array([])
         self.__config_line = '--'
         self.__legend = ''
-        self.__line_dpi = 1000              
+        self.__line_dpi = 1000    
+        self.__bounds_koefs = [0.2, 0.2]           
 
     #getters
+    @property
+    def left_bound_koef(self):
+        return self.__bounds_koefs[0]
+
+    @property
+    def right_bound_koef(self):
+        return self.__bounds_koefs[1]
+
     @property                               
     def config_line(self):
         return self.__config_line
@@ -36,6 +51,12 @@ class PlotFunction:
         return self.__legend
 
     #setters
+    def set_left_bound_koef(self, left_koef):
+        self.__bounds_koefs[0] = left_koef
+
+    def set_right_bound_koef(self, right_koef):
+        self.__bounds_koefs[1] = right_koef
+
     def set_line_dpi(self, line_dpi):           
         self.__line_dpi = line_dpi
 
@@ -64,6 +85,15 @@ class PlotFunction:
             new_array = np.append(new_array, func(it))
         self.set_arrayY(new_array)
 
+    #Sorts data by X array
+    def sort_data(self):
+        array_2D = np.array(self.arrayX, self.arrayY)
+        array_2D = np.transpose(array_2D)
+        array_2D = np.sort(array_2D, 0)
+        self.set_arrayX(array_2D[:, 0])
+        self.set_arrayY(array_2D[:, 1])
+
+
     #Creates functions in given boundaries
     def create_continuous_function(self, func, left_bound, right_bound):
         np.delete(self.arrayY)
@@ -86,9 +116,33 @@ class PlotFunction:
         self.set_arrayX(np.append(self.arrayX, my_plot_func.arrayX))
         self.set_arrayY(np.append(self.arrayY, my_plot_func.arrayY))
 
-    #Creates continuous function from given data
-    def fit_data(self, dots, left_bound, right_data):
-        pass
+    #Creates continuous function from inner data
+    def fit_data(self, deg):
+        koefs = np.polyfit(self.arrayX, self.arrayY, deg)
+        min_X = min(self.arrayX)
+        max_X = max(self.arrayX)
+        start = min_X - (max_X - min_X) * self.left_bound_koef
+        stop = max_X + (max_X - min_X) * self.right_bound_koef
+        new_X_arr = np.linspace(start, stop, self.line_dpi)
+        new_Y_arr = np.polyval(koefs, new_X_arr)
+        self.set_arrayX(new_X_arr)
+        self.set_arrayY(new_Y_arr)
+        return koefs
+
+    #Checks difference between func and experimental_data
+    #За правильный результат берутся экспериментальные данные
+    #https://en.wikipedia.org/wiki/Coefficient_of_determination
+    def calc_error(self, experimental_data):
+        exper_X = experimental_data[:, 0]
+        exper_Y = experimental_data[:, 1]
+        predict_Y = np.array([])
+        for cur_X in exper_X:
+            predict_Y = np.append(predict_Y, self.__get_nearest_val(cur_X))
+        return r2_score(exper_Y, predict_Y)
+
+    #Fits to func() 
+    def fit_to_function(self, func):
+        curve_fit()
     
 
 class MyPlot:
