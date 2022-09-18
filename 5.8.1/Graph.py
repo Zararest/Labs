@@ -64,8 +64,8 @@ def mult_and_divide_T(data):
 
 def calc_h(data):
     new_data = np.copy(data)
-    K_b = 1.38 * (10**(-23))
-    C_const = 3 * (10**8)
+    K_b = 1.380 * (10**(-23))
+    C_const = 2.997 * (10**8)
     for i in range(data[:, 0].size):
         new_data[i, 1] = ((2 * (np.pi**5) * (K_b**4)) / (15 * (C_const**2) * new_data[i, 1]))**(1/3)
     return new_data
