@@ -7,11 +7,6 @@ from sklearn.metrics import r2_score
 
 class PlotFunction:
 
-    def __get_nearest_val(self, X):
-        absolute_val_array = np.abs(self.arrayX - X)
-        smallest_difference_index = absolute_val_array.argmin()
-        return self.__arrayY[smallest_difference_index]
-
     #dpi - dots per interval
     def __init__(self):
         self.__arrayX = np.array([])
@@ -129,6 +124,12 @@ class PlotFunction:
         self.set_arrayY(new_Y_arr)
         return koefs
 
+    #Получение ближайшего значения по X
+    def get_nearest_val(self, X):
+        absolute_val_array = np.abs(self.arrayX - X)
+        smallest_difference_index = absolute_val_array.argmin()
+        return self.__arrayY[smallest_difference_index]
+
     #Checks difference between func and experimental_data
     #За правильный результат берутся экспериментальные данные
     #https://en.wikipedia.org/wiki/Coefficient_of_determination
@@ -137,7 +138,7 @@ class PlotFunction:
         exper_Y = experimental_data[:, 1]
         predict_Y = np.array([])
         for cur_X in exper_X:
-            predict_Y = np.append(predict_Y, self.__get_nearest_val(cur_X))
+            predict_Y = np.append(predict_Y, self.get_nearest_val(cur_X))
         return r2_score(exper_Y, predict_Y)
 
     #Fits to func() 
@@ -214,6 +215,11 @@ class MyPlot:
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
 
+
+    def save_all():
+        for fig_name in range(MyPlot.num_of_figures):
+            plt.figure(fig_name)
+            plt.savefig(fig_name)
 
     def show_all():
         plt.show()
