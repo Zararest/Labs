@@ -152,12 +152,6 @@ class MyPlot:
 
     num_of_figures = 0
 
-    def __add_legend(new_line, lines_list, new_legend, legends_list):
-        if new_legend != '':
-            lines_list.append(new_line)
-            legends_list.append(new_legend)
-        return legends_list
-
     def __init__(self):
         self.__plot = plt.figure(MyPlot.num_of_figures)
         self.__functions = list()
@@ -196,16 +190,12 @@ class MyPlot:
     
     #Creates lines from each function
     def draw_all(self):
-        legends_list = []
-        lines_list = []
         plt.figure(self.figure_name)
         for it in self.functions:
-            line = plt.plot(it.arrayX, it.arrayY, it.config_line)
-            MyPlot.__add_legend(line, lines_list, it.legend, legends_list)
+            plt.plot(it.arrayX, it.arrayY, it.config_line, label=it.legend)
         for it in self.dots:
-            line = plt.scatter(it.arrayX, it.arrayY)
-            MyPlot.__add_legend(line, lines_list, it.legend, legends_list)
-        plt.legend(lines_list, legends_list)
+            plt.scatter(it.arrayX, it.arrayY, label=it.legend)
+        plt.legend()
         
 
     def config_plot(self, title, xlabel, ylabel):
