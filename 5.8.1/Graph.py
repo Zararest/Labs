@@ -64,8 +64,10 @@ def mult_and_divide_T(data):
 
 def calc_h(data):
     new_data = np.copy(data)
+    print('Постоянная Больцмана', new_data)
     K_b = 1.380 * (10**(-23))
     C_const = 2.997 * (10**8)
+    print('Настоящая:', ((2 * (np.pi**5) * (K_b**4)) / (15 * (C_const**2) * 5.67 * (10**(-8))))**(1/3))
     for i in range(data[:, 0].size):
         new_data[i, 1] = ((2 * (np.pi**5) * (K_b**4)) / (15 * (C_const**2) * new_data[i, 1]))**(1/3)
     return new_data
@@ -73,7 +75,7 @@ def calc_h(data):
 def convert_P(data):
     new_data = np.copy(data)
     for i in range(data[:, 0].size):
-        new_data[i, 1] = new_data[i, 1] * 0.001
+        new_data[i, 1] = data[i, 1] * 0.001
     return new_data
 
 def swap_columns(data, first_col, second_col):
