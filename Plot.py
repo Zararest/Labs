@@ -82,7 +82,7 @@ class PlotFunction:
 
     #Sorts data by X array
     def sort_data(self):
-        array_2D = np.array(self.arrayX, self.arrayY)
+        array_2D = np.array([self.arrayX, self.arrayY])
         array_2D = np.transpose(array_2D)
         array_2D = np.sort(array_2D, 0)
         self.set_arrayX(array_2D[:, 0])
